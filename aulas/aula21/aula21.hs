@@ -1,7 +1,7 @@
 import System.IO
 --Aula 19
 
---Arvore Binária
+--Arvore N
 data Arvn a = Nil
             | No a [Arvn a]
             deriving (Show, Eq)
