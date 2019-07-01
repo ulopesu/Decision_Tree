@@ -27,19 +27,20 @@ simNaoIf x | simNao x == True = "Sim\n"
 
 
 
-
 class Eq a => Igual a where
  (===) :: a -> a -> Bool
  x === y = x == y
 
+
+{-
 instance Igual Int where
  a === b | a == b = True
-           | otherwise = False
+         | otherwise = False
 
 instance Igual Integer where
  a === b | a == b = True
-           | otherwise = False
-
+         | otherwise = False
+-}
 
 data Semaforo = Verde | Vermelho | Amarelo deriving (Show, Eq, Read)
 
