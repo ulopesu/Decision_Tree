@@ -22,11 +22,10 @@ dist (x1,y1) (x2,y2) = ((fromIntegral (x1-x2))^2 + (fromIntegral (y1-y2)^2))**0.
 
 
 type TriploF = (Float,Float,Float)
-type TriploG a = (a,a,a)
-
 volume :: TriploF -> Float
 volume (a,b,c) = a*b*c
 
+type TriploG a = (a,a,a)
 volume1 :: TriploG Float -> Float
 volume1 (a,b,c) = a*b*c
 

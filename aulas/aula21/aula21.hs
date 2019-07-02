@@ -27,6 +27,7 @@ criaArvs xxs = [criaArvN(xs) | xs<-xxs]
 criaMegaArv (xs:xxs) = criaMegaArvAux  xxs xs
 
 criaMegaArvAux [x] arv = (insereArv x arv)
+
 criaMegaArvAux (xs:xxs) arv = criaMegaArvAux xxs (insereArv xs arv)
 
 

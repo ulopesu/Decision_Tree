@@ -53,3 +53,4 @@ main = do entrada <- openFile "entrada.txt" ReadMode
           putStr (show arvMega)
           putStr "\n"
           hClose entrada
+          

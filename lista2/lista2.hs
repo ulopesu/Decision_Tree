@@ -55,4 +55,15 @@ instance (Eq m) => Eq (Maybe m) where
  _ == _ = False  
 -}
 
+-- 15)
+{-
+instance Monad Maybe where  
+    return x = Just x 
+    Nothing >>= f = Nothing  
+    Just x >>= f  = f x  
+    fail _ = Nothing
+-}
+
+
+generation = replicate 3
 listX = [5,3,2,4,1,7,8,9,6]
