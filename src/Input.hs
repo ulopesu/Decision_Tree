@@ -11,11 +11,11 @@ stringsToWords :: [String] -> [[String]]
 stringsToWords xs = [words y | y <- xs]
 
 getTypes :: Foldable t => [t a] -> [[Char]]
-getTypes [] = []
+getTypes [x] = []
 getTypes (xs:xxs) | length xs > 1 = ["string"] ++ (getTypes xxs)
                   | otherwise = ["int"] ++ (getTypes xxs)
 
-readAll :: Handle -> Handle -> Handle -> IO ([[String]], [[String]], [[String]], [[Char]])
+readAll :: Handle -> Handle -> Handle -> IO ([[String]], [[String]], [[String]], [String])
 readAll descriptionInput baseInput casesInput  = do description <- readContents descriptionInput
                                                     base <- readContents baseInput
                                                     cases <- readContents casesInput
