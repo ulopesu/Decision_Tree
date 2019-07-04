@@ -2,7 +2,7 @@ import System.IO
 import Data.List
 
 data ArvN a = Nil
-            | No a [ArvN a] 
+            | No a [ArvN a]
             deriving (Show, Eq) 
             
 criaArvN [] = Nil
