@@ -17,12 +17,26 @@ main = do descriptionInput <- openFile "descricao.txt" ReadMode
           let types = getTypes dados
           
           let features = createFeatures headerFeatures base types
-            
-          let big = bIG features
+          
+          let examples = (getExFeatures features)
+          let mostCommon = mostC examples
 
-          print features
-          putStr "\n"
-          print big
+
+
+
+
+          --let arvDec examples features mostC
+
+
+
+
+
+          print mostCommon
+          --print features
+          --putStr "\n"
+
+          --let big = bIG features
+          --print big
 
 
 

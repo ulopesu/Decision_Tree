@@ -40,6 +40,11 @@ iGainR :: (Float, Int) -> Feature -> Float
 iGainR (entFeature, qtdExamples) (Feature (nameF, values, kind)) = (iGain entFeature values qtdExamples) / (sumVIValues values qtdExamples)*(-1)
 
 
+infoRoot :: Feature -> (Float, Int)
+infoRoot feature = (entropyFeature feature, qtdExamples feature)
+
+entropyFeature feature = entropy $ gDF feature
+
 --informationGain
 iGain entFeature values qtdExamples = entFeature - (sumEntValues values qtdExamples)
 
@@ -66,34 +71,9 @@ sumVIValue (ValueInt (value, value1, examples)) qtdExamples = fract * (logBase 2
   where fract = fromIntegral (length examples) / fromIntegral qtdExamples
 
 
-infoRoot :: Feature -> (Float, Int)
-infoRoot feature = (entropyFeature feature, qtdExamples feature)
 
+mostC :: [String] -> String
+mostC strings = head (groups!!idMostCommon)
+  where groups = group $ sort strings
+        idMostCommon = biggerID (map fromIntegral (map length (groups)))
 
-entropyFeature feature = entropy $ gDF feature
-
--- getDecisionsFeature (gDF)
-gDF:: Feature -> [String]
-gDF (Feature (nameF, values, kind)) = gDVS values
-
--- getDecisionsValues gDVS
-gDVS [] = []
-gDVS (v:vs) = (gDV v)++ gDVS vs
-
--- getDecisionsValue gDV
-gDV:: Value -> [String]
-gDV (ValueStr (value, examples)) = examples
-gDV (ValueInt (value, value1, examples)) = examples
-
-qtdExamples:: Feature -> Int
-qtdExamples (Feature (nameF, values, kind)) = qtdExValues values
-
-qtdExValues:: [Value] -> Int
-qtdExValues [] = 0
-qtdExValues (v:vs) = (qtdExValue v) + (qtdExValues vs) 
-
-qtdExValue:: Value -> Int
-qtdExValue (ValueStr (value, examples)) = length examples
-qtdExValue (ValueInt (value, value1, examples)) = length examples
-
-  

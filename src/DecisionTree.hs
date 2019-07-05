@@ -45,6 +45,37 @@ instance Ord Value where
   ValueInt (_, x, _) >= ValueInt (_, y, _) = x >= y
   ValueInt (_, x, _) > ValueInt (_, y, _) = x > y
 
+
+-- getDecisionsFeature (gDF)
+gDF:: Feature -> [String]
+gDF (Feature (nameF, values, kind)) = gDVS values
+
+-- getDecisionsValues gDVS
+gDVS [] = []
+gDVS (v:vs) = (gDV v)++ gDVS vs
+
+-- getDecisionsValue gDV
+gDV:: Value -> [String]
+gDV (ValueStr (value, examples)) = examples
+gDV (ValueInt (value, value1, examples)) = examples
+
+qtdExamples:: Feature -> Int
+qtdExamples (Feature (nameF, values, kind)) = qtdExValues values
+
+qtdExValues:: [Value] -> Int
+qtdExValues [] = 0
+qtdExValues (v:vs) = (qtdExValue v) + (qtdExValues vs) 
+
+qtdExValue:: Value -> Int
+qtdExValue (ValueStr (value, examples)) = length examples
+qtdExValue (ValueInt (value, value1, examples)) = length examples
+
+
+getExFeatures :: [Feature] -> [String]
+getExFeatures [] = []
+getExFeatures (x:xs) = (gDF x) ++ (getExFeatures xs)
+
+
 createFeatures :: [[String]] -> [[String]] -> [String] -> [Feature]
 createFeatures headerFeatures base types = createFeaturesAux headerFeatures base types 0
 
@@ -53,6 +84,7 @@ createFeaturesAux [] base types pos = []
 createFeaturesAux (xs:xss) base types pos = newF:nextF
    where newF = Feature (head xs, getValuesBase (tail xs) base pos, types!!pos)
          nextF = createFeaturesAux xss base types (pos+1)         
+
 
 getValuesBase :: [String] -> [[String]] -> Int -> [Value]
 getValuesBase [] base pos = newVSInt
@@ -70,11 +102,9 @@ getExamplesStr v (b:bs) pos | v == (b!!pos) = (last b):(getExamplesStr v bs pos)
                             | otherwise = getExamplesStr v bs pos
 
 getExamplesInt base pos = filterVSInt (sort (generateExamples base pos))
--- FAZER AQUI A LIMPEZA DOS EXEMPLOS ENUMERADOS, NAO PRECISO DELES PARA CALCULAR A ENTROPIA
 
 
 generateExamples::  [[String]] -> Int -> [Value]
-
 generateExamples [] _ = []
 generateExamples (b:bs) pos = newB:nextB
   where newB = ValueInt (intEx, intEx, [last b])
@@ -103,18 +133,12 @@ filterVSIntAux (e:es) (ValueInt (id1, id2, stgs)) len intAnt strAnt | strAtual =
 
 -- ULTIMO CASO
 filterVSIntAux [] (ValueInt (id1, id2, stgs)) len intAnt strAnt = [ValueInt (id1, id1, stgs)]
-
-                                                                              
+                                                                     
 calcId1 0 med = 0
 calcId1 x _ = x
 
 
-
-
---ValueInt (Int, Int, [String])
-
-
-
+                   
 
  --PSEUDO-CODIGO
 {-
@@ -135,8 +159,13 @@ arvoreDecisao (exemplos, caracteristicas, maisComum): arvore
 
   retorne arvore;
 -}
+{-
 
---data DecisionTree = String | Feature
+data ArvDec =  String | Value | No (Feature, [ArvDec])
 
-
-          
+--arvoreDecisao (arvDec)
+arvDec [] features mostCommon = mostCommon
+arvDec examples features mostCommon | sameClass examples = classExamples (examples)
+                                    | feature == [] = maioria examples
+                                    | otherwise = createRoot
+          -}
