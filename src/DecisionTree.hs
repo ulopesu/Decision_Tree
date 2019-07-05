@@ -15,9 +15,35 @@ getCases (_, _, cases, _) = cases
 getTypes:: ([[String]], [[String]], [[String]], [String]) -> [String]
 getTypes (_, _, _, types) = types
 
-data Value  = ValueStr (String, [String]) | ValueInt (Int, [String]) deriving (Show)
 
 data Feature = Feature (String, [Value], String) deriving (Show)
+
+data Value  = ValueStr (String, [String]) | ValueInt (Int, Int, [String]) deriving (Show, Eq)
+
+--getDecisionsValue (getDSV)
+getDSV:: Value -> [String]
+getDSV (ValueStr (_, x)) = x
+getDSV (ValueInt (_, _, x)) = x
+
+--getIntValue (getISV)
+getISV:: Value -> Int
+getISV (ValueInt (x, _, _)) = x
+
+--getStringValue (getStrV)
+getStrV:: Value -> String
+getStrV (ValueStr (x, _)) = x
+
+--addStringOnValue (addStrOnV)
+addStrOnV:: Value -> String -> Value
+addStrOnV (ValueInt (x, y, z)) str = ValueInt (x, y, z++[str])
+addStrOnV (ValueStr (x, y)) str = ValueStr (x, y++[str])
+
+
+instance Ord Value where
+  ValueInt (x, _, _) < ValueInt (y, _, _) = x < y
+  ValueInt (x, _, _) <= ValueInt (y, _, _) = x <= y
+  ValueInt (x, _, _) >= ValueInt (y, _, _) = x >= y
+  ValueInt (x, _, _) > ValueInt (y, _, _) = x > y
 
 createFeatures :: [[String]] -> [[String]] -> [String] -> [Feature]
 createFeatures headerFeatures base types = createFeaturesAux headerFeatures base types 0
@@ -30,7 +56,7 @@ createFeaturesAux (xs:xss) base types pos = newF:nextF
 
 getValuesBase :: [String] -> [[String]] -> Int -> [Value]
 getValuesBase [] base pos = newVSInt
-  where newVSInt = newValuesInt (getExamplesInt base pos)
+  where newVSInt = getExamplesInt base pos
 
 getValuesBase [v]  base pos = [newVStr]
   where newVStr =  ValueStr (v, getExamplesStr v base pos)
@@ -43,25 +69,49 @@ getExamplesStr v [] pos = []
 getExamplesStr v (b:bs) pos | v == (b!!pos) = (last b):(getExamplesStr v bs pos)
                             | otherwise = getExamplesStr v bs pos
 
-getExamplesInt base pos = (sortBy (comparing fst) (generateExamples base pos))
+getExamplesInt base pos = filterVSInt (sort (generateExamples base pos))
 -- FAZER AQUI A LIMPEZA DOS EXEMPLOS ENUMERADOS, NAO PRECISO DELES PARA CALCULAR A ENTROPIA
+
+
+generateExamples::  [[String]] -> Int -> [Value]
 
 generateExamples [] _ = []
 generateExamples (b:bs) pos = newB:nextB
-  where newB = (read (b!!pos) ::Int, last b)
+  where newB = ValueInt (intEx, intEx, [last b])
         nextB = generateExamples bs pos
+        intEx = read (b!!pos) ::Int
 
-newValuesInt:: [(Int, String)] -> [Value]
-newValuesInt [] = []
-newValuesInt (e:es) = newVInt:nextVInt
-  where newVInt = ValueInt (getIntExample e, getStrExample e)
-        nextVInt = newValuesInt es
 
-getIntExample:: (Int, String) -> Int
-getIntExample (x,_) = x
-getStrExample:: (Int, String) -> [String]
-getStrExample (_,y) = [y]
 
+filterVSInt :: [Value] -> [Value]
+filterVSInt examples = filterVSIntAux examples (ValueInt (0, 0, [])) 0 0 []
+
+-- PRIMEIRO CASO
+filterVSIntAux (e:es) initValue len intAnt [] = filterVSIntAux es newValueInt (len+1) intAtual strAtual
+  where strAtual = head (getDSV e)
+        intAtual = getISV e
+        newValueInt = addStrOnV initValue strAtual
+
+-- INTERMEDIARIO
+filterVSIntAux (e:es) (ValueInt (id1, id2, stgs)) len intAnt strAnt | strAtual == strAnt = filterVSIntAux es (addStrOnV (ValueInt (id1, id2, stgs)) strAtual) (len+1) (getISV e) (head (getDSV e))
+                                                                    | otherwise = [(ValueInt (vId1, mediana, stgs))] ++ (filterVSIntAux es newValueInt (len+1) intAtual strAtual)
+  where mediana = (intAnt + intAtual) `div` 2
+        intAtual = getISV e
+        strAtual = head (getDSV e)
+        newValueInt = ValueInt (mediana, 0, [strAtual])
+        vId1 = calcId1 id1 mediana
+
+-- ULTIMO CASO
+filterVSIntAux [] (ValueInt (id1, id2, stgs)) len intAnt strAnt = [ValueInt (intAnt, intAnt, stgs)]
+
+                                                                              
+calcId1 0 med = med
+calcId1 x _ = x
+
+
+
+
+--ValueInt (Int, Int, [String])
 
 
 

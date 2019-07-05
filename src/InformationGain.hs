@@ -45,7 +45,7 @@ sumEntValues (v:vs) qtdExamples = (sumEntValue v qtdExamples) + (sumEntValues vs
 
 sumEntValue :: Value -> Int -> Float
 sumEntValue (ValueStr (value, examples)) qtdExamples =  (fromIntegral (length examples) / fromIntegral qtdExamples) * (entropy examples)
-sumEntValue (ValueInt (value, examples)) qtdExamples =  (fromIntegral (length examples) / fromIntegral qtdExamples) * (entropy examples)
+sumEntValue (ValueInt (value, value1, examples)) qtdExamples =  (fromIntegral (length examples) / fromIntegral qtdExamples) * (entropy examples)
 
 infoRoot :: Feature -> (Float, Int)
 infoRoot feature = (entropyFeature feature, qtdExamples feature)
@@ -64,7 +64,7 @@ gDVS (v:vs) = (gDV v)++ gDVS vs
 -- getDecisionsValue gDV
 gDV:: Value -> [String]
 gDV (ValueStr (value, examples)) = examples
-gDV (ValueInt (value, examples)) = examples
+gDV (ValueInt (value, value1, examples)) = examples
 
 qtdExamples:: Feature -> Int
 qtdExamples (Feature (nameF, values, kind)) = qtdExValues values
@@ -75,6 +75,6 @@ qtdExValues (v:vs) = (qtdExValue v) + (qtdExValues vs)
 
 qtdExValue:: Value -> Int
 qtdExValue (ValueStr (value, examples)) = length examples
-qtdExValue (ValueInt (value, examples)) = length examples
+qtdExValue (ValueInt (value, value1, examples)) = length examples
 
   

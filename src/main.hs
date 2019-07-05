@@ -20,7 +20,7 @@ main = do descriptionInput <- openFile "descricao.txt" ReadMode
             
           let igf = iGFeatures features
 
-          print igf
+          print features
 
           {-
           putStr "\n\n" 
