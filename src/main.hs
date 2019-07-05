@@ -18,9 +18,13 @@ main = do descriptionInput <- openFile "descricao.txt" ReadMode
           
           let features = createFeatures headerFeatures base types
             
-          let igf = iGFeatures features
+          let big = bIG features
 
           print features
+          putStr "\n"
+          print big
+
+
 
           {-
           putStr "\n\n" 

@@ -18,7 +18,7 @@ getTypes (_, _, _, types) = types
 
 data Feature = Feature (String, [Value], String) deriving (Show)
 
-data Value  = ValueStr (String, [String]) | ValueInt (Int, Int, [String]) deriving (Show, Eq)
+data Value  = ValueStr (String, [String]) | ValueInt (Float, Float, [String]) deriving (Show, Eq)
 
 --getDecisionsValue (getDSV)
 getDSV:: Value -> [String]
@@ -26,7 +26,7 @@ getDSV (ValueStr (_, x)) = x
 getDSV (ValueInt (_, _, x)) = x
 
 --getIntValue (getISV)
-getISV:: Value -> Int
+getISV:: Value -> Float
 getISV (ValueInt (x, _, _)) = x
 
 --getStringValue (getStrV)
@@ -40,10 +40,10 @@ addStrOnV (ValueStr (x, y)) str = ValueStr (x, y++[str])
 
 
 instance Ord Value where
-  ValueInt (x, _, _) < ValueInt (y, _, _) = x < y
-  ValueInt (x, _, _) <= ValueInt (y, _, _) = x <= y
-  ValueInt (x, _, _) >= ValueInt (y, _, _) = x >= y
-  ValueInt (x, _, _) > ValueInt (y, _, _) = x > y
+  ValueInt (_, x, _) < ValueInt (_, y, _) = x < y
+  ValueInt (_, x, _) <= ValueInt (_, y, _) = x <= y
+  ValueInt (_, x, _) >= ValueInt (_, y, _) = x >= y
+  ValueInt (_, x, _) > ValueInt (_, y, _) = x > y
 
 createFeatures :: [[String]] -> [[String]] -> [String] -> [Feature]
 createFeatures headerFeatures base types = createFeaturesAux headerFeatures base types 0
@@ -79,7 +79,7 @@ generateExamples [] _ = []
 generateExamples (b:bs) pos = newB:nextB
   where newB = ValueInt (intEx, intEx, [last b])
         nextB = generateExamples bs pos
-        intEx = read (b!!pos) ::Int
+        intEx = read (b!!pos) ::Float
 
 
 
@@ -95,17 +95,17 @@ filterVSIntAux (e:es) initValue len intAnt [] = filterVSIntAux es newValueInt (l
 -- INTERMEDIARIO
 filterVSIntAux (e:es) (ValueInt (id1, id2, stgs)) len intAnt strAnt | strAtual == strAnt = filterVSIntAux es (addStrOnV (ValueInt (id1, id2, stgs)) strAtual) (len+1) (getISV e) (head (getDSV e))
                                                                     | otherwise = [(ValueInt (vId1, mediana, stgs))] ++ (filterVSIntAux es newValueInt (len+1) intAtual strAtual)
-  where mediana = (intAnt + intAtual) `div` 2
+  where mediana = (intAnt + intAtual) / 2
         intAtual = getISV e
         strAtual = head (getDSV e)
         newValueInt = ValueInt (mediana, 0, [strAtual])
         vId1 = calcId1 id1 mediana
 
 -- ULTIMO CASO
-filterVSIntAux [] (ValueInt (id1, id2, stgs)) len intAnt strAnt = [ValueInt (intAnt, intAnt, stgs)]
+filterVSIntAux [] (ValueInt (id1, id2, stgs)) len intAnt strAnt = [ValueInt (id1, id1, stgs)]
 
                                                                               
-calcId1 0 med = med
+calcId1 0 med = 0
 calcId1 x _ = x
 
 

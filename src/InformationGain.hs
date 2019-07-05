@@ -33,11 +33,16 @@ biggerIDAux (x:xs) idMaior idAtual | (head xs) > x = biggerIDAux xs (idAtual+1) 
 
 iGFeatures:: [Feature] -> [Float]
 iGFeatures [] = []
-iGFeatures (f:fs) = [(iGain (infoRoot f) f)]++(iGFeatures fs)
+iGFeatures (f:fs) = [(iGainR (infoRoot f) f)]++(iGFeatures fs)
 
---informationGain (iGain)
-iGain :: (Float, Int) -> Feature -> Float
-iGain (entFeature, qtdExamples) (Feature (nameF, values, kind)) = entFeature - (sumEntValues values qtdExamples)
+--informationGainRaise (iGainR)
+iGainR :: (Float, Int) -> Feature -> Float
+iGainR (entFeature, qtdExamples) (Feature (nameF, values, kind)) = (iGain entFeature values qtdExamples) / (sumVIValues values qtdExamples)*(-1)
+
+
+--informationGain
+iGain entFeature values qtdExamples = entFeature - (sumEntValues values qtdExamples)
+
 
 sumEntValues [] _ = 0
 sumEntValues (v:vs) qtdExamples = (sumEntValue v qtdExamples) + (sumEntValues vs qtdExamples)
@@ -46,6 +51,20 @@ sumEntValues (v:vs) qtdExamples = (sumEntValue v qtdExamples) + (sumEntValues vs
 sumEntValue :: Value -> Int -> Float
 sumEntValue (ValueStr (value, examples)) qtdExamples =  (fromIntegral (length examples) / fromIntegral qtdExamples) * (entropy examples)
 sumEntValue (ValueInt (value, value1, examples)) qtdExamples =  (fromIntegral (length examples) / fromIntegral qtdExamples) * (entropy examples)
+
+
+-- Valor Intrínseco
+sumVIValues [] _ = 0
+sumVIValues (v:vs) qtdExamples = (sumVIValue v qtdExamples) + (sumVIValues vs qtdExamples)
+
+
+sumVIValue :: Value -> Int -> Float
+sumVIValue (ValueStr (value, examples)) qtdExamples = fract * (logBase 2 fract)
+  where fract = fromIntegral (length examples) / fromIntegral qtdExamples
+
+sumVIValue (ValueInt (value, value1, examples)) qtdExamples = fract * (logBase 2 fract)
+  where fract = fromIntegral (length examples) / fromIntegral qtdExamples
+
 
 infoRoot :: Feature -> (Float, Int)
 infoRoot feature = (entropyFeature feature, qtdExamples feature)

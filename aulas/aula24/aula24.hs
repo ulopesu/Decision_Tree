@@ -1,6 +1,12 @@
 class RespostaSN a where
  simNao :: a -> Bool
 
+data Xurupita = Xupa | Pita deriving (Eq,Show)
+
+instance RespostaSN Xurupita where
+        simNao Xupa = False
+        simNao Pita = True 
+
 instance RespostaSN Int where
  simNao 0 = False
  simNao _ = True
@@ -43,5 +49,8 @@ instance Igual Integer where
 -}
 
 data Semaforo = Verde | Vermelho | Amarelo deriving (Show, Eq, Read)
+
+
+
 
 instance Igual Semaforo where
