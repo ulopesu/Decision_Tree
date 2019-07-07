@@ -29,6 +29,9 @@ type TriploG a = (a,a,a)
 volume1 :: TriploG Float -> Float
 volume1 (a,b,c) = a*b*c
 
+volume2 :: TriploG Int -> Int
+volume2 (a,b,c) = a*b*c
+
 data Resposta = Sim | Nao | Desconheco
     deriving (Show, Eq)
 

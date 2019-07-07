@@ -1,8 +1,7 @@
 module InformationGain where
 import Data.List
-
-import DecisionTree
-
+import Feature
+import Value
 
 entropy :: (Ord a, Floating b) => [a] -> b
 entropy = sum . map lg . fq . map genericLength . group . sort 
@@ -12,24 +11,10 @@ entropy = sum . map lg . fq . map genericLength . group . sort
 
 
 
---data Value  = ValueStr (String, [String]) | ValueInt (Int, String) deriving (Show)
-
---data Feature = Feature (String, [Value], String) deriving (Show)
-
 --biggerInformationGain
+bestIGR:: [Feature] -> Int
+bestIGR features = biggerID (iGFeatures features)
 
-bIG:: [Feature] -> Int
-
-bIG features = biggerID (iGFeatures features)
-
-biggerID :: [Float] -> Int
-biggerID xs =  biggerIDAux xs 0 0
-
-biggerIDAux :: [Float] -> Int -> Int -> Int
-biggerIDAux [] _ _ = -1
-biggerIDAux [x] idMaior idAtual = idMaior
-biggerIDAux (x:xs) idMaior idAtual | (head xs) > x = biggerIDAux xs (idAtual+1) (idAtual+1)
-                                   | otherwise = biggerIDAux xs idMaior (idAtual+1)
 
 iGFeatures:: [Feature] -> [Float]
 iGFeatures [] = []
@@ -48,10 +33,8 @@ entropyFeature feature = entropy $ gDF feature
 --informationGain
 iGain entFeature values qtdExamples = entFeature - (sumEntValues values qtdExamples)
 
-
 sumEntValues [] _ = 0
 sumEntValues (v:vs) qtdExamples = (sumEntValue v qtdExamples) + (sumEntValues vs qtdExamples)
-
 
 sumEntValue :: Value -> Int -> Float
 sumEntValue (ValueStr (value, examples)) qtdExamples =  (fromIntegral (length examples) / fromIntegral qtdExamples) * (entropy examples)
@@ -72,8 +55,5 @@ sumVIValue (ValueInt (value, value1, examples)) qtdExamples = fract * (logBase 2
 
 
 
-mostC :: [String] -> String
-mostC strings = head (groups!!idMostCommon)
-  where groups = group $ sort strings
-        idMostCommon = biggerID (map fromIntegral (map length (groups)))
+        
 
