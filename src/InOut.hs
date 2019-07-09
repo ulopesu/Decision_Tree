@@ -1,5 +1,6 @@
-module Input where
+module InOut where
 import System.IO
+import Text.Printf
 
 stringToInt :: [String] -> [Int]
 stringToInt xs = [read y :: Int | y<-xs]

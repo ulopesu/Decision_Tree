@@ -7,18 +7,19 @@ import InformationGain
 
 --ESTUDAR DESEMPATE PARA ValueSTR
 
-data ArvDec = Leaf String | Val Value | Root (String, [ArvDec]) deriving (Show)
+data ArvDec = Leaf String | Val Value | Root (String, Int, [ArvDec]) deriving (Show)
 
 --arvoreDecisao (arvDec)
 newArvDec:: [Feature] -> ArvDec
 newArvDec [] = Leaf []
-newArvDec features | sameClass examples = arvStr | otherwise = createRoot feature
-  where feature = features!!(bestIGR features)
+newArvDec features | sameClass examples = arvStr | otherwise = createRoot feature indexBest
+  where feature = features!!(indexBest)
         examples = gDF feature
         arvStr = Leaf (theClassEx examples)
+        indexBest = bestIGR features
 
-createRoot:: Feature -> ArvDec
-createRoot (Feature (nameF, values, kind)) = Root (nameF, map Val values)
+createRoot:: Feature -> Int -> ArvDec
+createRoot (Feature (nameF, values, kind)) idBest = Root (nameF, idBest, map Val values)
 
 theClassEx :: [String] -> String
 theClassEx [] = []
