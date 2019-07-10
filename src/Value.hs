@@ -26,6 +26,8 @@ getID1V (ValueInt (_, x, _)) = x
 getStrV:: Value -> String
 getStrV (ValueStr (x, _)) = x
 
+
+
 --addStringOnValue (addStrOnV)
 addStrOnV:: Value -> String -> Value
 addStrOnV (ValueInt (x, y, z)) str = ValueInt (x, y, z++[str])
@@ -44,9 +46,11 @@ gDVS :: [Value] -> [String]
 gDVS [] = []
 gDVS (v:vs) = (getDSV v)++ gDVS vs
 
-mostCDV:: Value -> Value
-mostCDV (ValueStr (name, decisions)) =  ValueStr (name, [mostC decisions])
-mostCDV (ValueInt (v0, v1, decisions)) =  ValueInt (v0, v1, [mostC decisions])
+cleanValue:: Value -> Value
+cleanValue (ValueStr (name, decisions)) =  ValueStr (name, newD)
+  where newD = map head (group $ sort decisions)
+cleanValue (ValueInt (v0, v1, decisions)) =  ValueInt (v0, v1, newD)
+  where newD = map head (group $ sort decisions)
 
 mostC :: [String] -> String
 mostC [] = []

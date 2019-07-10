@@ -2,10 +2,20 @@ module Feature where
 import Data.List
 import Value
 
-data Feature = Feature (String, [Value], String) deriving (Show)
+data Feature = Feature (String, [Value]) deriving (Show)
+
+-- getNameFeature (gDF)
+gNF:: Feature -> String
+gNF (Feature (nameF, values)) = nameF
+
+
+-- getValuesFeature (gVSF)
+gVSF:: Feature -> [Value]
+gVSF (Feature (nameF, values)) = values
+
 
 qtdExamples:: Feature -> Int
-qtdExamples (Feature (nameF, values, kind)) = qtdExValues values
+qtdExamples (Feature (nameF, values)) = qtdExValues values
 
 getExFeatures :: [Feature] -> [String]
 getExFeatures [] = []
@@ -13,17 +23,16 @@ getExFeatures (x:xs) = (gDF x) ++ (getExFeatures xs)
 
 -- getDecisionsFeature (gDF)
 gDF:: Feature -> [String]
-gDF (Feature (nameF, values, kind)) = gDVS values
+gDF (Feature (nameF, values)) = gDVS values
 
+createFeatures :: [[String]] -> [[String]] -> [Feature]
+createFeatures headerFeatures base = createFeaturesAux headerFeatures base 0
 
-createFeatures :: [[String]] -> [[String]] -> [String] -> [Feature]
-createFeatures headerFeatures base types = createFeaturesAux headerFeatures base types 0
-
-createFeaturesAux :: [[String]] -> [[String]] -> [String] -> Int -> [Feature]
-createFeaturesAux [] base types pos = []
-createFeaturesAux (xs:xss) base types pos = newF:nextF
-   where newF = Feature (head xs, values, types!!pos)
-         nextF = createFeaturesAux xss base types (pos+1)    
+createFeaturesAux :: [[String]] -> [[String]] -> Int -> [Feature]
+createFeaturesAux [] base pos = []
+createFeaturesAux (xs:xss) base pos | xs /= [] = newF:nextF | otherwise = nextF
+   where newF = Feature (head xs, values)
+         nextF = createFeaturesAux xss base (pos+1)    
          values = getValuesBase (tail xs) base pos
 
 
@@ -66,13 +75,8 @@ filterVSIntAux (e:es) initValue len intAnt [] = filterVSIntAux es newValueInt (l
 
 filterVSIntAux [] (ValueInt (id1, id2, stgs)) len intAnt strAnt = [ValueInt (id1, id1, stgs)]
 filterVSIntAux (e:es) (ValueInt (id1, id2, stgs)) len intAnt strAnt | strAtual == strAnt = filterVSIntAux es (addStrOnV (ValueInt (id1, id2, stgs)) strAtual) (len+1) (getID0V e) (head (getDSV e))
-                                                                    | otherwise = [(ValueInt (vId1, mediana, stgs))] ++ (filterVSIntAux es newValueInt (len+1) intAtual strAtual)
+                                                                    | otherwise = [(ValueInt (id1, mediana, stgs))] ++ (filterVSIntAux es newValueInt (len+1) intAtual strAtual)
   where mediana = (intAnt + intAtual) / 2
         intAtual = getID0V e
         strAtual = head (getDSV e)
         newValueInt = ValueInt (mediana, 0, [strAtual])
-        vId1 = calcId1 id1 mediana
-
-calcId1 :: (Eq a, Num a, Num p) => a -> p -> p                                      
-calcId1 0 med = 0
-calcId1 _ med = med

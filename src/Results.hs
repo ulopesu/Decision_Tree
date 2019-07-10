@@ -1,8 +1,8 @@
 module Results where
 import DecisionTree
 import Value
-
-generateResults :: ArvDec -> [[[Char]]] -> [Char]
+{-
+generateResults :: DecTree -> [[[Char]]] -> [Char]
 generateResults arv [] = []
 generateResults arv (c:cs) = newResult ++ nextResult
     where newResult = generateResult arv c
@@ -10,7 +10,7 @@ generateResults arv (c:cs) = newResult ++ nextResult
 
 generateResult _ [] = "Sem casos para testar!"
 generateResult (Leaf result) cas = result ++ "\n" 
-generateResult (Root (nameF, values, idF, kind)) cas = result ++ "\n"
+generateResult (Tree (nameF, values, idF, kind)) cas = result ++ "\n"
     where result = calcResult values valCase kind
           valCase = cas!!idF
 
@@ -33,3 +33,5 @@ calcIntResult (v:vs) valCase | (valCase > getID0V v) && (valCase <= getID1V v) =
                              | (getID0V v == 0) && (valCase <= getID1V v) = head $ getDSV v
                              | (getID0V v == getID1V v) && (valCase > getID0V v) = head $ getDSV v
                              | otherwise = calcIntResult vs valCase
+
+                             -}

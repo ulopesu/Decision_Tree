@@ -1,8 +1,9 @@
 import System.IO
 import InOut (readAll, getDescription, getBase, getCases, getTypes)
-import DecisionTree (newArvDec)
-import Feature (createFeatures)
-import Results (generateResults)
+import DecisionTree 
+import Feature (createFeatures, getExFeatures)
+import Results 
+import Value
 
 main = do descriptionInput <- openFile "descricao.txt" ReadMode
           baseInput <- openFile "base.txt" ReadMode
@@ -14,19 +15,18 @@ main = do descriptionInput <- openFile "descricao.txt" ReadMode
           let description = getDescription dados
           let headerFeatures = init description
           let base = getBase dados
-          let types = getTypes dados
+          --let types = getTypes dados
           let cases = getCases dados
 
-          let features = createFeatures headerFeatures base types
-          let arv = newArvDec features 
+          let features = createFeatures headerFeatures base
+          let arv = newDecTree features headerFeatures base (mostC $ getExFeatures features)
 
-          --print features
-          --putStr "\n\n"
+          print features
+          putStr "\n\n"
           print arv
           putStr "\n"
-          print cases
-
-          hPutStr resultsOutput (generateResults arv cases)
+          --print cases
+          --hPutStr resultsOutput (generateResults arv cases)
 
           hClose descriptionInput
           hClose baseInput

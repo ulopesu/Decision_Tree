@@ -3,27 +3,79 @@ import Data.List
 import Feature
 import Value
 import InformationGain
+                           --(nameFeature, [(nameValue, nextTree)], id)
+data DecTree = Leaf String | Tree (String, [(Value, DecTree)], Int) deriving (Show)
 
-data ArvDec = Leaf String | Root (String, [Value], Int, String) deriving (Show)
+newDecTree:: [Feature] -> [[String]] -> [[String]] -> String -> DecTree
+newDecTree features headerFS [] mostCommon = Leaf mostCommon
+newDecTree [] headerFS base mostCommon = Leaf (mostC (getClassesBase base))
+newDecTree features headerFS base mostCommon | sameClass = Leaf (last $ head base) | otherwise = createTree features headerFS base
+  where classesBase = getClassesBase base
+        sameClass = isSameClass classesBase                             
+        
+createTree:: [Feature] -> [[String]] -> [[String]] -> DecTree         
+createTree features headerFS base = (Tree (nameF, nextTrees, idBest))
+  where idBest = bestIGR features
+        bestF = features!!idBest
+        nameF = gNF bestF
+        values = gVSF bestF
+        nextTrees = createTreesValues idBest values (cleanList headerFS idBest) base
 
---arvoreDecisao (arvDec)
-newArvDec:: [Feature] -> ArvDec
-newArvDec [] = Leaf []
-newArvDec features | sameClass examples = arvStr | otherwise = createRoot feature indexBest
-  where feature = features!!(indexBest)
-        examples = gDF feature
-        arvStr = Leaf (theClassEx examples)
-        indexBest = bestIGR features
+      
+createTreesValues:: Int -> [Value] -> [[String]] -> [[String]] -> [(Value, DecTree)]                               
+createTreesValues idBest [] newHeader base = []
+createTreesValues idBest (v:vs) newHeader base = [point] ++ nextTrees
+  where newB = cleanBase (newBase idBest v base) idBest
+        newFeatures = createFeatures newHeader newB
+        mostCommon = mostC $ getClassesBase newB
+        newTree = newDecTree newFeatures newHeader newB mostCommon
+        point = (cleanValue v, newTree)
+        nextTrees = createTreesValues idBest vs newHeader base
 
-createRoot:: Feature -> Int -> ArvDec
-createRoot (Feature (nameF, values, kind)) idBest = Root (nameF, (map mostCDV values), idBest, kind)
 
-theClassEx :: [String] -> String
-theClassEx [] = []
-theClassEx (x:xs) = x
+                                                   
+
+{-
+arvoreDecisao (exemplos, caracteristicas, maisComum): arvore     
+  se (exemplos é vazio) 
+    entao retorne maisComum;    
+  senão se (todos os exemplos têm a mesma classificação)
+    entao retorne (a classificação);    
+  senão se (não há mais características)       
+    então retorne maioria(exemplos);    
+  senão        
+    melhor <- melhorTeste(características,exemplos);        
+    árvore <- nova árvore com raiz “melhor”;        
+      para cada valor vi de melhor faça            
+      exemplosi <- exemplos onde melhor = vi;            
+      subárvore <- arvoreDecisao(exemplosi, caracteristicas-{melhor}, maioria(exemplos));            
+      adicione subárvore como um ramo à árvore com rótulo vi;    
+    retorne arvore;
+-}
+newBase :: Int -> Value -> [[String]] -> [[String]]
+newBase idBest value [] = []
+newBase idBest (ValueStr (nameV, exs)) (b:bs) | nameV == (b!!idBest) = b:nextB | otherwise = nextB
+  where nextB = newBase idBest (ValueStr (nameV, exs)) bs
+
+newBase idBest (ValueInt (id0, id1, exs)) (b:bs) | (idX > id0) && (idX <= id1) = b:nextB | (id0 == 0) && (idX < id1) = b:nextB | (id0 == id1) && (idX > id1) = b:nextB | otherwise = nextB
+  where idX = read (b!!idBest) :: Float
+        nextB = newBase idBest (ValueInt (id0, id1, exs)) bs
+
+
+cleanBase:: [[a]] -> Int -> [[a]]
+cleanBase [] id = []   
+cleanBase (b:bs) id = [cleanList b id] ++ (cleanBase bs id)
+        
+cleanList:: [a] -> Int -> [a]
+cleanList [] id = []
+cleanList list id = (take id list) ++ (drop (id+1) list)
+
+getClassesBase:: [[String]] -> [String]
+getClassesBase [] = []
+getClassesBase (b:bs) = [(last b)] ++ (getClassesBase bs)
                                     
-sameClass :: [String] -> Bool
-sameClass strings | gLength == 1 = True | otherwise = False
+isSameClass:: [String] -> Bool
+isSameClass strings | gLength == 1 = True | otherwise = False
   where groups = group $ sort strings
         gLength = length groups
-
+{--}
