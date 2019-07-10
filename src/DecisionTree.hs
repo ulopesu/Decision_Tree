@@ -33,25 +33,6 @@ createTreesValues idBest (v:vs) newHeader base = [point] ++ nextTrees
         nextTrees = createTreesValues idBest vs newHeader base
 
 
-                                                   
-
-{-
-arvoreDecisao (exemplos, caracteristicas, maisComum): arvore     
-  se (exemplos é vazio) 
-    entao retorne maisComum;    
-  senão se (todos os exemplos têm a mesma classificação)
-    entao retorne (a classificação);    
-  senão se (não há mais características)       
-    então retorne maioria(exemplos);    
-  senão        
-    melhor <- melhorTeste(características,exemplos);        
-    árvore <- nova árvore com raiz “melhor”;        
-      para cada valor vi de melhor faça            
-      exemplosi <- exemplos onde melhor = vi;            
-      subárvore <- arvoreDecisao(exemplosi, caracteristicas-{melhor}, maioria(exemplos));            
-      adicione subárvore como um ramo à árvore com rótulo vi;    
-    retorne arvore;
--}
 newBase :: Int -> Value -> [[String]] -> [[String]]
 newBase idBest value [] = []
 newBase idBest (ValueStr (nameV, exs)) (b:bs) | nameV == (b!!idBest) = b:nextB | otherwise = nextB
@@ -78,4 +59,3 @@ isSameClass:: [String] -> Bool
 isSameClass strings | gLength == 1 = True | otherwise = False
   where groups = group $ sort strings
         gLength = length groups
-{--}
