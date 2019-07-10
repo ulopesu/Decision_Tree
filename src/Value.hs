@@ -14,9 +14,13 @@ getDSV:: Value -> [String]
 getDSV (ValueStr (_, x)) = x
 getDSV (ValueInt (_, _, x)) = x
 
+--getID0Value (getISV)
+getID0V:: Value -> Float
+getID0V (ValueInt (x, _, _)) = x
+
 --getIntValue (getISV)
-getISV:: Value -> Float
-getISV (ValueInt (x, _, _)) = x
+getID1V:: Value -> Float
+getID1V (ValueInt (_, x, _)) = x
 
 --getStringValue (getStrV)
 getStrV:: Value -> String
@@ -26,7 +30,6 @@ getStrV (ValueStr (x, _)) = x
 addStrOnV:: Value -> String -> Value
 addStrOnV (ValueInt (x, y, z)) str = ValueInt (x, y, z++[str])
 addStrOnV (ValueStr (x, y)) str = ValueStr (x, y++[str])
-
   
 qtdExValues:: [Value] -> Int
 qtdExValues [] = 0
@@ -37,6 +40,7 @@ qtdExValue (ValueStr (value, examples)) = length examples
 qtdExValue (ValueInt (value, value1, examples)) = length examples
 
 -- getDecisionsValues gDVS
+gDVS :: [Value] -> [String]
 gDVS [] = []
 gDVS (v:vs) = (getDSV v)++ gDVS vs
 

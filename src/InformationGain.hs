@@ -9,8 +9,6 @@ entropy = sum . map lg . fq . map genericLength . group . sort
         fq b = let sb = sum b in map (/ sb) b
 
 
-
-
 --biggerInformationGain
 bestIGR:: [Feature] -> Int
 bestIGR features = biggerID (iGFeatures features)
@@ -28,11 +26,14 @@ iGainR (entFeature, qtdExamples) (Feature (nameF, values, kind)) = (iGain entFea
 infoRoot :: Feature -> (Float, Int)
 infoRoot feature = (entropyFeature feature, qtdExamples feature)
 
+entropyFeature :: Floating b => Feature -> b
 entropyFeature feature = entropy $ gDF feature
 
 --informationGain
+iGain :: Float -> [Value] -> Int -> Float
 iGain entFeature values qtdExamples = entFeature - (sumEntValues values qtdExamples)
 
+sumEntValues :: [Value] -> Int -> Float
 sumEntValues [] _ = 0
 sumEntValues (v:vs) qtdExamples = (sumEntValue v qtdExamples) + (sumEntValues vs qtdExamples)
 
@@ -42,6 +43,7 @@ sumEntValue (ValueInt (value, value1, examples)) qtdExamples =  (fromIntegral (l
 
 
 -- Valor Intrínseco
+sumVIValues :: [Value] -> Int -> Float
 sumVIValues [] _ = 0
 sumVIValues (v:vs) qtdExamples = (sumVIValue v qtdExamples) + (sumVIValues vs qtdExamples)
 
