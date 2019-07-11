@@ -4,7 +4,11 @@ import Feature
 import Value
 import InformationGain
                            --(nameFeature, [(nameValue, nextTree)], id)
-data DecTree = Leaf String | Tree (String, [(Value, DecTree)], Int) deriving (Show)
+data DecTree = Leaf String | Tree (String, Int, [(Value, DecTree)]) deriving (Show)
+
+isLeafTree:: DecTree -> Bool
+isLeafTree (Leaf _) = True
+isLeafTree (Tree _) = False
 
 newDecTree:: [Feature] -> [[String]] -> [[String]] -> String -> DecTree
 newDecTree features headerFS [] mostCommon = Leaf mostCommon
@@ -14,7 +18,7 @@ newDecTree features headerFS base mostCommon | sameClass = Leaf (last $ head bas
         sameClass = isSameClass classesBase                             
         
 createTree:: [Feature] -> [[String]] -> [[String]] -> DecTree         
-createTree features headerFS base = (Tree (nameF, nextTrees, idBest))
+createTree features headerFS base = (Tree (nameF, idBest, nextTrees))
   where idBest = bestIGR features
         bestF = features!!idBest
         nameF = gNF bestF

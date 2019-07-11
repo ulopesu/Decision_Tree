@@ -1,4 +1,4 @@
-module InOut where
+module Input where
 import System.IO
 import Text.Printf
 
