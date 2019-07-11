@@ -25,7 +25,7 @@ main = do descriptionInput <- openFile "descricao.txt" ReadMode
           putStr "\n"
 
       
-          let arv = generateArvSTR tree []
+          let arv = init (generateArvSTR tree [])
           print arv
           hPutStr arvOutput arv
 
