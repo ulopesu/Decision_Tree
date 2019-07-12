@@ -3,11 +3,10 @@ import Data.List
 import Feature
 import Value
 
-entropy :: (Ord a, Floating c) => [a] -> c  
+entropy :: (Ord a, Floating b) => [a] -> b
 entropy = sum . map lg . fq . map genericLength . group . sort 
-  where lg c = -c * logBase 2 c
-        fq c = let sc = sum c in map (/ sc) c
-
+  where lg b = -b * logBase 2 b
+        fq b = let sb = sum b in map (/ sb) b
 
 
 --biggerInformationGain
@@ -37,7 +36,7 @@ sumEntValues [] _ = 0
 sumEntValues (v:vs) qtdExamples = (sumEntValue v qtdExamples) + (sumEntValues vs qtdExamples)
 
 sumEntValue :: Value -> Int -> Float
-sumEntValue (ValueStr (value, examples)) qtdExamples = (fromIntegral (length examples) / fromIntegral qtdExamples) * (entropy examples)
+sumEntValue (ValueStr (value, examples)) qtdExamples =  (fromIntegral (length examples) / fromIntegral qtdExamples) * (entropy examples)
 sumEntValue (ValueInt (value, value1, examples)) qtdExamples =  (fromIntegral (length examples) / fromIntegral qtdExamples) * (entropy examples)
 
 

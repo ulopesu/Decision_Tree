@@ -1,10 +1,9 @@
 import System.IO
 import Input (readAll, getDescription, getBase, getCases)
 import DecisionTree 
-import Feature 
+import Feature (createFeatures, getExFeatures)
 import Output 
 import Value
-import InformationGain
 
 main = do descriptionInput <- openFile "descricao.txt" ReadMode
           baseInput <- openFile "base.txt" ReadMode
@@ -21,10 +20,7 @@ main = do descriptionInput <- openFile "descricao.txt" ReadMode
           let features = createFeatures headerFeatures base
           let tree = newDecTree features headerFeatures base (mostC $ getExFeatures features)
 
-          print features
-          print tree
-          
-          print (iGFeatures features)
+          print cases
 
           let results = (generateResultSTR tree cases)
           print results

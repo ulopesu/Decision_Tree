@@ -9,6 +9,10 @@ instance Ord Value where
     ValueInt (_, x, _) >= ValueInt (_, y, _) = x >= y
     ValueInt (_, x, _) > ValueInt (_, y, _) = x > y
 
+--getDecisionsValue (getDSV)
+getDSV:: Value -> [String]
+getDSV (ValueStr (_, x)) = x
+getDSV (ValueInt (_, _, x)) = x
 
 --getID0Value (getISV)
 getID0V:: Value -> Float
@@ -22,15 +26,7 @@ getID1V (ValueInt (_, x, _)) = x
 getStrV:: Value -> String
 getStrV (ValueStr (x, _)) = x
 
---getDecisionsValue (getDSV)
-getDSV:: Value -> [String]
-getDSV (ValueStr (_, x)) = x
-getDSV (ValueInt (_, _, x)) = x
 
--- getDecisionsValues gDVS
-gDVS :: [Value] -> [String]
-gDVS [] = []
-gDVS (v:vs) = (getDSV v) ++ gDVS vs
 
 --addStringOnValue (addStrOnV)
 addStrOnV:: Value -> String -> Value
@@ -45,6 +41,10 @@ qtdExValue:: Value -> Int
 qtdExValue (ValueStr (value, examples)) = length examples
 qtdExValue (ValueInt (value, value1, examples)) = length examples
 
+-- getDecisionsValues gDVS
+gDVS :: [Value] -> [String]
+gDVS [] = []
+gDVS (v:vs) = (getDSV v)++ gDVS vs
 
 cleanValue:: Value -> Value
 cleanValue (ValueStr (name, decisions)) =  ValueStr (name, newD)

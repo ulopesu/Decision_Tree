@@ -3,7 +3,7 @@ import Data.List
 import Feature
 import Value
 import InformationGain
-
+                           --(nameFeature, [(nameValue, nextTree)], id)
 data DecTree = Leaf String | Tree (String, Int, [(Value, DecTree)]) deriving (Show)
 
 isLeafTree:: DecTree -> Bool

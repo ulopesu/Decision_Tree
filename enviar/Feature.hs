@@ -30,7 +30,7 @@ createFeatures headerFeatures base = createFeaturesAux headerFeatures base 0
 
 createFeaturesAux :: [[String]] -> [[String]] -> Int -> [Feature]
 createFeaturesAux [] base pos = []
-createFeaturesAux (xs:xss) base pos | (xs /= []) && ((length values) > 0) = newF:nextF | otherwise = nextF
+createFeaturesAux (xs:xss) base pos | xs /= [] = newF:nextF | otherwise = nextF
    where newF = Feature (head xs, values)
          nextF = createFeaturesAux xss base (pos+1)    
          values = getValuesBase (tail xs) base pos
@@ -40,14 +40,12 @@ getValuesBase :: [String] -> [[String]] -> Int -> [Value]
 getValuesBase [] base pos = newVSInt
   where newVSInt = getExamplesInt base pos
 
-getValuesBase [v]  base pos | (length examples) > 0 = [newVStr] | otherwise = []
-  where newVStr =  ValueStr (v, examples)
-        examples = getExamplesStr v base pos
+getValuesBase [v]  base pos = [newVStr]
+  where newVStr =  ValueStr (v, getExamplesStr v base pos)
 
-getValuesBase (v:vs) base pos | (length examples) > 0 = newVStr:nextVStr | otherwise = nextVStr
-  where newVStr =  ValueStr (v, examples)
+getValuesBase (v:vs) base pos = newVStr:nextVStr
+  where newVStr =  ValueStr (v, getExamplesStr v base pos)
         nextVStr = getValuesBase vs base pos
-        examples =  getExamplesStr v base pos
 
 
 getExamplesStr :: Eq a => a -> [[a]] -> Int -> [a]
