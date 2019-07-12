@@ -9,7 +9,7 @@ generateResultSTR arv (c:cs) = newResult ++"\n"++ nextResult
           nextResult = generateResultSTR arv cs
 
 generateResult :: DecTree -> [String] -> String
-generateResult _ [] = "Sem casos para testar!\n"
+generateResult _ [] = "Caso Vazio\n"
 generateResult (Leaf result) cas = result
 generateResult (Tree (nameF, idF, valuesAndTrees)) cas = result
     where result = calcResult valuesAndTrees cas idF
@@ -46,16 +46,23 @@ calcResultValue (ValueInt (id0, id1, decisions)) value | (length decisions) > 1 
 --data DecTree = Leaf String | Tree (String, Int, [(Value, DecTree)]) deriving (Show)
 --ValueStr (String, [String]) | ValueInt (Float, Float, [String]) 
 
+isEmptyValue (ValueStr (vName, [])) = True
+isEmptyValue (ValueInt (id0, id1, [])) = True
+isEmptyValue _ = False
+
+getValuevt (value, tree) = value
 
 generateArvSTR (Leaf decision) tab = []
 generateArvSTR (Tree (nameF, idF, valuesAndTrees)) tab = generateArvStrVTS nameF valuesAndTrees tab
 
 
 generateArvStrVTS nameF [] tab = []
-generateArvStrVTS nameF (vt:vts) tab | (next /= []) = saida0 | otherwise = new ++ tab ++ "fim-se\n"
+generateArvStrVTS nameF (vt:vts) tab | isEmpty = [] | (next /= []) = saida0 | otherwise = new ++ tab ++ "fim-se\n"
     where new =  generateArvStrVT nameF vt tab
           next = generateArvStrVTS nameF vts (tab++"   ")
-          saida0 = new ++ tab ++ "senao\n" ++ next ++ tab ++ "fim-se\n"
+          saida0 = new ++ tab ++ "senao \n" ++ next ++ tab ++ "fim-se\n"
+          value = getValuevt vt
+          isEmpty = isEmptyValue value
 
 
 generateArvStrVT nameF (value, tree) tab | (not leafTree) = genArvStrV ++ nexTree | otherwise = genArvStrV 
@@ -64,14 +71,15 @@ generateArvStrVT nameF (value, tree) tab | (not leafTree) = genArvStrV ++ nexTre
           leafTree = isLeafTree tree
 
 
-generateArvStrValue (ValueStr (vName, decisions)) nameF tab | lenDe > 1 = saida1 | otherwise = saida0
+generateArvStrValue (ValueStr (vName, decisions)) nameF tab | lenDe < 1 = [] | lenDe > 1 = saida1 | otherwise = saida0
     where lenDe = length decisions
           decision = head decisions
           saida0 = tab ++ "se " ++ nameF ++ " = "++ vName ++ " entao\n" ++ tab ++"   retorne " ++ decision ++ "\n"
           saida1 = tab ++ "se " ++ nameF ++ " = "++ vName ++ " entao\n" 
 
 
-generateArvStrValue (ValueInt (id0, id1, decisions)) nameF tab | (lenDe > 1) && (id0 == 0) = saida0
+generateArvStrValue (ValueInt (id0, id1, decisions)) nameF tab | lenDe < 1 = []
+                                                               | (lenDe > 1) && (id0 == 0) = saida0
                                                                | (lenDe > 1) && (id0 == id1) = saida1
                                                                | (lenDe > 1) = saida2
                                                                | id0 == 0 = saida3

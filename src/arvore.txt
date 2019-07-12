@@ -1,15 +1,39 @@
-se Vento = Sim entao
-   retorne Va
-senao
-   se Vento = Nao entao
-      se Umidade <= 73.0 entao
-         retorne Va
-      senao
-         se 73.0 < Umidade <= 93.0 entao
-            retorne NaoVa
-         senao
-            se Umidade > 93.0 entao
-               retorne Va
+se petalWidth <= 0.8 entao
+   retorne Iris-setosa
+senao 
+   se 0.8 < petalWidth <= 1.4 entao
+      retorne Iris-versicolor
+      se petalLength <= 5.2 entao
+         retorne Iris-versicolor
+      senao 
+         se petalLength > 5.2 entao
+            retorne Iris-virginica
+         fim-se
+      fim-se
+   senao 
+      se 1.4 < petalWidth <= 1.475 entao
+         retorne Iris-virginica
+      senao 
+         se 1.475 < petalWidth <= 1.5 entao
+            retorne Iris-versicolor
+            se petalLength <= 4.95 entao
+               retorne Iris-versicolor
+            senao 
+               se petalLength > 4.95 entao
+                  retorne Iris-virginica
+               fim-se
+            fim-se
+         senao 
+            se 1.5 < petalWidth <= 1.55 entao
+               retorne Iris-virginica
+            senao 
+               se 1.55 < petalWidth <= 1.7 entao
+                  retorne Iris-versicolor
+               senao 
+                  se petalWidth > 1.7 entao
+                     retorne Iris-virginica
+                  fim-se
+               fim-se
             fim-se
          fim-se
       fim-se
