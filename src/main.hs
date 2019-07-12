@@ -24,7 +24,7 @@ main = do descriptionInput <- openFile "descricao.txt" ReadMode
           print features
           print tree
           
-          print (iGFeatures features)
+          print (iGFeatures features (qtdExpFS features))
 
           let results = (generateResultSTR tree cases)
           print results

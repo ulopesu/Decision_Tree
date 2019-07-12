@@ -14,8 +14,11 @@ gVSF:: Feature -> [Value]
 gVSF (Feature (nameF, values)) = values
 
 
-qtdExamples:: Feature -> Int
+qtdExamples :: Feature -> Int
 qtdExamples (Feature (nameF, values)) = qtdExValues values
+
+qtdExpFS [] = 0
+qtdExpFS (f:fs) = (qtdExamples f) + (qtdExpFS fs)
 
 getExFeatures :: [Feature] -> [String]
 getExFeatures [] = []

@@ -12,18 +12,17 @@ entropy = sum . map lg . fq . map genericLength . group . sort
 
 --biggerInformationGain
 bestIGR:: [Feature] -> Int
-bestIGR features = biggerID (iGFeatures features)
+bestIGR features = biggerID (iGFeatures features (qtdExpFS features)) 
 
-iGFeatures:: [Feature] -> [Float]
-iGFeatures [] = []
-iGFeatures (f:fs) = [(iGainR (infoRoot f) f)]++(iGFeatures fs)
+iGFeatures:: [Feature] -> Int -> [Float]
+iGFeatures [] qtdExps = []
+iGFeatures (f:fs) qtdExps = [iGainR entropyF qtdExps f]++(iGFeatures fs qtdExps)
+  where entropyF = entropyFeature f
 
 --informationGainRaise (iGainR)
-iGainR :: (Float, Int) -> Feature -> Float
-iGainR (entFeature, qtdExamples) (Feature (nameF, values)) = (iGain entFeature values qtdExamples) / (sumVIValues values qtdExamples)*(-1)
+iGainR :: Float -> Int -> Feature -> Float
+iGainR entFeature qtdExamples (Feature (nameF, values)) = (iGain entFeature values qtdExamples) / (sumVIValues values qtdExamples)*(-1)
 
-infoRoot :: Feature -> (Float, Int)
-infoRoot feature = (entropyFeature feature, qtdExamples feature)
 
 entropyFeature :: Floating b => Feature -> b
 entropyFeature feature = entropy $ gDF feature
